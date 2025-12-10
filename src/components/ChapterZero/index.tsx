@@ -38,7 +38,7 @@ const ChapterZero: React.FC = () => {
             y: 0,
             opacity: 1,
             rotateX: 0,
-            duration: 1.5,
+            duration: 1,
             stagger: 0.2,
             ease: "power3.out",
           },

@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useRef, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { CHAPTERS } from "@/constants";
+import { Spin as Hamburger } from "hamburger-react";
 
 interface SidebarProps {
   onChapterClick?: (id: string) => void;
@@ -11,57 +12,92 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ onChapterClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const tl = useRef<gsap.core.Timeline | null>(null);
 
+  // Animation Timeline Setup
   useLayoutEffect(() => {
-    // Scope GSAP to the overlayRef
     const ctx = gsap.context(() => {
       // 1. Initial State
-      // Position overlay off-screen to the LEFT (xPercent: -100)
       gsap.set(overlayRef.current, { xPercent: -100, autoAlpha: 1 });
-      // Initial state for cards
-      gsap.set(".chapter-card", { y: 50, opacity: 0 });
+      gsap.set(".chapter-card", { x: -50, opacity: 0 });
 
       // 2. Build Timeline
       tl.current = gsap
         .timeline({ paused: true })
         .to(overlayRef.current, {
           xPercent: 0,
-          duration: 1,
+          duration: 0.8,
           ease: "power4.inOut",
         })
         .to(
           ".chapter-card",
           {
-            y: 0,
+            x: 0,
             opacity: 1,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: "power3.out",
+            duration: 0.6,
+            stagger: 0.05,
+            ease: "power2.out",
           },
-          "-=0.6"
+          "-=0.4"
         );
     }, overlayRef);
 
     return () => ctx.revert();
   }, []);
 
+  // Open/Close Logic & Scroll Locking
   useLayoutEffect(() => {
     if (tl.current) {
       if (isOpen) {
         tl.current.play();
-        document.body.style.overflow = "hidden"; // Prevent background scrolling
+        // Lock body and html scrolling
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
       } else {
         tl.current.reverse();
+        // Unlock body and html scrolling
         document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
       }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  // Desktop Horizontal Scroll Handling (Wheel -> Horizontal)
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+
+    if (el && isOpen) {
+      const onWheel = (e: WheelEvent) => {
+        // Only apply custom scroll logic on Desktop views
+        if (window.innerWidth >= 1024) {
+          if (e.deltaY !== 0) {
+            // Prevent default vertical scroll of the page
+            e.preventDefault();
+            // Manually scroll the container horizontally
+            el.scrollLeft += e.deltaY;
+          }
+        }
+      };
+
+      // Add non-passive event listener to allow preventDefault
+      el.addEventListener("wheel", onWheel, { passive: false });
+
+      return () => {
+        el.removeEventListener("wheel", onWheel);
+      };
     }
   }, [isOpen]);
 
   const handleLinkClick = (id: string) => {
     setIsOpen(false);
     if (onChapterClick) {
-      // Small delay to allow sidebar to close visually before scrolling
       setTimeout(() => {
         onChapterClick(id);
       }, 500);
@@ -70,86 +106,97 @@ const Sidebar: React.FC<SidebarProps> = ({ onChapterClick }) => {
 
   return (
     <>
-      {/* Sidebar Trigger Strip - Fixed on Left/Top */}
-      {/* 
-         Desktop: Left side, Full height. 
-         Mobile: Top side, Full width.
-         Button position: Top-left on desktop (justify-start + padding).
-      */}
-      <nav className="fixed top-0 right-0 lg:right-auto lg:left-0 w-full lg:w-20 h-14 lg:h-full bg-white z-[1000] border-b lg:border-b-0 lg:border-r border-gray-100 flex lg:flex-col items-center justify-between lg:justify-start lg:pt-10 px-6 lg:px-0 transition-all duration-300">
+      {/* Navigation Bar / Toggle Button */}
+      <nav className="fixed top-0 right-0 lg:right-auto lg:left-0 w-full lg:w-20 h-14 lg:h-full bg-white z-[2010] border-b lg:border-b-0 lg:border-r border-gray-100 transition-all duration-300">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="group flex flex-col items-center gap-6 cursor-pointer outline-none w-full h-full lg:h-auto justify-center lg:w-auto"
+          className="relative w-full h-full cursor-pointer outline-none block"
         >
-          {/* Desktop Vertical Text */}
-          <div className="hidden lg:flex flex-col items-center gap-4 writing-vertical-rl transform rotate-180">
-            <span
-              style={{
-                writingMode: "sideways-lr",
-                textOrientation: "sideways",
-              }}
-              className={`text-[10px] uppercase tracking-[0.25em] transition-colors duration-300 ${
-                isOpen
-                  ? "text-black font-semibold"
-                  : "text-gray-400 group-hover:text-black"
-              }`}
-            >
-              {isOpen ? "Close Menu" : "All Chapters"}
-            </span>
+          {/* Desktop Layout: Absolute Top Left */}
+          <div className="hidden lg:block">
+            <div className="absolute top-8 left-1/2 -translate-x-1/2 z-50">
+              <Hamburger
+                toggled={isOpen}
+                toggle={setIsOpen}
+                color="black"
+                size={20}
+                duration={0.8}
+              />
+            </div>
+            <div className="absolute top-24 left-1/2 -translate-x-1/2 w-full flex justify-center pointer-events-none">
+              <span
+                style={{
+                  writingMode: "vertical-rl",
+                  textOrientation: "mixed",
+                }}
+                className={`text-[10px] uppercase tracking-[0.25em] transition-colors duration-300 whitespace-nowrap ${
+                  isOpen
+                    ? "text-black font-semibold"
+                    : "text-gray-400 group-hover:text-black"
+                }`}
+              >
+                {isOpen ? "Close Menu" : "All Chapters"}
+              </span>
+            </div>
           </div>
 
-          {/* Mobile Horizontal Text */}
-          <div className="lg:hidden flex items-center">
-            <span className="text-[10px] uppercase tracking-[0.2em] text-gray-500">
-              {isOpen ? "Close" : "All Chapters"}
-            </span>
-          </div>
-
-          {/* Icon Indicator */}
-          <div className="relative w-4 h-4 flex items-center justify-center">
-            <div
-              className={`absolute w-full h-[1px] bg-black transition-all duration-300 ${
-                isOpen ? "rotate-45" : "-translate-y-1"
-              }`}
-            ></div>
-            <div
-              className={`absolute w-full h-[1px] bg-black transition-all duration-300 ${
-                isOpen ? "-rotate-45" : "translate-y-1"
-              }`}
-            ></div>
+          {/* Mobile Layout: Absolute Top Right */}
+          <div className="lg:hidden w-full h-full relative">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-row items-center gap-4">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-gray-500 min-w-[60px] text-right">
+                {isOpen ? "Close" : "All Chapters"}
+              </span>
+              <div className="relative z-50">
+                <Hamburger
+                  toggled={isOpen}
+                  toggle={setIsOpen}
+                  color="black"
+                  size={18}
+                  duration={0.8}
+                />
+              </div>
+            </div>
           </div>
         </button>
       </nav>
 
-      {/* All Chapters Full Screen Overlay */}
-      {/* 
-          Fixed z-index 900.
-          overflow-y-auto ensures scrolling on small desktop screens with many items.
-      */}
+      {/* Full Screen Overlay */}
+      {/* Mobile: overflow-y-auto handles vertical scroll */}
+      {/* Desktop: overflow-hidden because inner container handles horizontal scroll */}
       <div
         ref={overlayRef}
-        className="fixed inset-0 w-full h-screen bg-gray-50 z-[900] overflow-y-auto overflow-x-hidden invisible"
+        className="fixed inset-0 w-full h-screen bg-gray-50 z-[2000] overflow-y-auto lg:overflow-hidden invisible overscroll-contain"
       >
-        {/* 
-           Inner Container: 
-           - Removed 'min-h-screen flex items-center' to prevent overflow issues on desktop.
-           - Added top/bottom padding to ensure content is reachable.
-           - Added lg:pl-28 to account for the sidebar width.
-        */}
-        <div className="w-full pt-20 pb-20 px-6 lg:pl-32 lg:pr-12">
+        <div className="w-full h-full pt-20 pb-20 px-6 lg:pl-32 lg:pr-0 flex flex-col">
           {/* Overlay Header */}
-          <div className="w-full text-center mb-12 lg:mb-20">
+          <div className="w-full text-center lg:text-left mb-12 lg:mb-0 lg:absolute lg:top-10 lg:left-32 shrink-0 z-10">
             <h2 className="text-[10px] font-sans uppercase tracking-[0.3em] text-black">
               All Chapters
             </h2>
           </div>
 
-          {/* Grid Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16 w-full max-w-[1600px] mx-auto">
+          {/* 
+            Responsive Scroll Container 
+            Mobile: Grid layout, scrolls with parent (overlayRef)
+            Desktop: Flex layout, horizontal scroll handled here via ref
+          */}
+          <div
+            ref={scrollContainerRef}
+            className="
+              w-full flex-grow
+              grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-16      
+              lg:flex lg:flex-row lg:flex-nowrap lg:overflow-x-auto lg:items-center lg:gap-10 lg:h-full lg:pb-0
+              no-scrollbar overscroll-contain
+            "
+          >
             {CHAPTERS.map((chapter, index) => (
               <div
                 key={chapter.id}
-                className="chapter-card group cursor-pointer flex flex-col w-full bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300"
+                className="
+                  chapter-card group cursor-pointer flex flex-col bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300
+                  w-full                                  
+                  lg:w-[400px] lg:shrink-0 lg:min-w-[400px] lg:aspect-[3/4] lg:justify-center
+                "
                 onClick={() => handleLinkClick(chapter.id)}
               >
                 {/* Top Row: Index and Image */}
@@ -197,6 +244,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onChapterClick }) => {
                 </div>
               </div>
             ))}
+
+            {/* Spacer for horizontal scroll on desktop */}
+            <div className="hidden lg:block w-12 shrink-0 h-full"></div>
           </div>
         </div>
       </div>

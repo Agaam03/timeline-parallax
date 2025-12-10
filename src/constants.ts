@@ -157,4 +157,83 @@ export const CHAPTERS: ChapterData[] = [
         "This chapter marks not just where we started, but where our hearts learned what home truly feels like."
     },
   },
+  {
+    id: 'ch5',
+    chapter: 'Chapter Two',
+    title: 'The Beginning',
+    firstSection: {
+      // Screen 1
+      imageLeft: "/chapter-2/2-1.jpg",
+      topTitleImage: "The First Encounter",
+      bottomTitleImage: "Where Everything Started",
+      maintext:
+        "Every conversation became longer, every laugh sweeter, and every moment more meaningful",
+      bottomMainText:
+        "A message. A glance. A moment that felt strangely familiar—like destiny giving a gentle push. Nothing dramatic, no spotlight, just a simple connection that felt effortless and warm."
+    },
+    secondSection: {
+      mainImage: "/chapter-2/2-2.png",
+      bottomTitleLeftImage: "A Day We’ll Always Remember"
+    },
+    thridSection: {
+      imageBottomLeft: "/chapter-2/2-3.jpg",
+      titleImageBottomLeft: "Growing Closer",
+      imageRightTop: "/chapter-2/2-4.jpg",
+      titleImageRightTop: "Unexpected Feelings",
+      mainText:
+        "Every conversation became longer, every laugh sweeter, and every moment more meaningful.",
+      subMainText:
+        "We found comfort in each other's presence, even in silence. Slowly but surely, our hearts started choosing each other.",
+      mainImageRight: "/chapter-2/2-5.jpg",
+      titleMainImageRight: "Two Souls, One Journey"
+    },
+    fourthSection: {
+      mainText:
+        "From that first meeting to every memory we’ve created, everything felt like it was leading us here.",
+      mainImageRight: "/chapter-2/2-6.jpg",
+      titleMainImageRight: "The Beginning of Forever",
+      descImageRight:
+        "This chapter marks not just where we started, but where our hearts learned what home truly feels like."
+    },
+  },
+  {
+    id: 'ch6',
+    chapter: 'Chapter Two',
+    title: 'The Beginning',
+    firstSection: {
+      // Screen 1
+      imageLeft: "/chapter-2/2-1.jpg",
+      topTitleImage: "The First Encounter",
+      bottomTitleImage: "Where Everything Started",
+      maintext:
+        "Every conversation became longer, every laugh sweeter, and every moment more meaningful",
+      bottomMainText:
+        "A message. A glance. A moment that felt strangely familiar—like destiny giving a gentle push. Nothing dramatic, no spotlight, just a simple connection that felt effortless and warm."
+    },
+    secondSection: {
+      mainImage: "/chapter-2/2-2.png",
+      bottomTitleLeftImage: "A Day We’ll Always Remember"
+    },
+    thridSection: {
+      imageBottomLeft: "/chapter-2/2-3.jpg",
+      titleImageBottomLeft: "Growing Closer",
+      imageRightTop: "/chapter-2/2-4.jpg",
+      titleImageRightTop: "Unexpected Feelings",
+      mainText:
+        "Every conversation became longer, every laugh sweeter, and every moment more meaningful.",
+      subMainText:
+        "We found comfort in each other's presence, even in silence. Slowly but surely, our hearts started choosing each other.",
+      mainImageRight: "/chapter-2/2-5.jpg",
+      titleMainImageRight: "Two Souls, One Journey"
+    },
+    fourthSection: {
+      mainText:
+        "From that first meeting to every memory we’ve created, everything felt like it was leading us here.",
+      mainImageRight: "/chapter-2/2-6.jpg",
+      titleMainImageRight: "The Beginning of Forever",
+      descImageRight:
+        "This chapter marks not just where we started, but where our hearts learned what home truly feels like."
+    },
+  },
+
 ];
