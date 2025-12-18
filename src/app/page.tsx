@@ -14,6 +14,7 @@ import ChapterZeroMobile from "@/components/ChapterZeroMobile";
 import MusicPlayer from "@/components/MusicPlayer";
 import ContentChapterMobile from "@/components/ContentChapterMobile";
 import Sidebar from "@/components/Sidebar";
+import Silk from "@/components/Silk";
 
 // Register GSAP plugin
 gsap.registerPlugin(ScrollTrigger);

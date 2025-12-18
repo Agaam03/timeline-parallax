@@ -125,7 +125,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
   }, [currentTrackIndex, isPlaying]);
 
   return (
-    <main className="relative w-56 mx-auto bg-gray-100/80 rounded-sm   overflow-hidden text-black">
+    <main className="relative w-56 mx-auto bg-gray-100 rounded-sm   overflow-hidden text-black">
       <audio
         ref={audioRef}
         src={currentTrack.url}

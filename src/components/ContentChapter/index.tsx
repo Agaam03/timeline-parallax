@@ -94,41 +94,38 @@ const ContentChapter: React.FC<ContentChapterProps> = ({ data, timeline }) => {
               </p>
             </div>
             {/* Overlay Caption - Centered Bottom */}
-            <div className="absolute bottom-16 left-0 w-full text-center z-10 pointer-events-none">
+            {/* <div className="absolute bottom-16 left-0 w-full text-center z-10 pointer-events-none">
               <p className="font-serif text-md uppercase text-white drop-shadow-md">
                 Indonesia
               </p>
               <p className="font-serif -mt-1 uppercase text-6xl tracking-tight text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.4)]">
                 Lamongan
               </p>
-              <p className="mt-4 text-sm uppercase text-white drop-shadow-md">
-                68°14′00″N 14°34′00″E
-              </p>
-            </div>
+            </div> */}
           </div>
         </div>
 
         {/* Right: Typography Content (55%) */}
-        <div className="w-[50%] h-full flex flex-col justify-center px-16 lg:px-24 relative">
+        <div className="w-[50%]   h-full flex flex-col justify-center px-16 lg:px-24 relative">
           {/* Chapter Number Absolute Top Right */}
           <div className="absolute top-12 left-1/2 -translate-x-1/2 text-center  text-[10px] tracking-[0.3em] font-sans uppercase text-gray-500">
             {data.chapter}.
           </div>
 
           {/* Main Headline Block */}
-          <div className="flex flex-col gap-6">
-            <h2 className="font-serif uppercase leading-[0.9] text-4xl md:text-5xl lg:text-5xl text-black/80 text-center">
+          <div className="flex mx-auto  gap-6   w-[80%] items-center justify-center">
+            <h2 className="font-serif   leading-[0.9] text-4xl md:text-5xl lg:text-5xl text-black/80 text-center">
               {data.firstSection.maintext}
             </h2>
 
             {/* Body Text at Bottom */}
-            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 w-full flex justify-center px-10">
+            {/* <div className="absolute bottom-5 left-1/2 -translate-x-1/2 w-full flex justify-center px-10">
               <div className="max-w-xl">
                 <p className="  text-sm font-medium leading-4 text-gray-600 text-justify">
                   {data.firstSection.bottomMainText}
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
@@ -136,7 +133,7 @@ const ContentChapter: React.FC<ContentChapterProps> = ({ data, timeline }) => {
       {/* Panel 2: Full Screen Landscape Image with Parallax */}
       <section
         ref={secondSectionRef}
-        className="panel w-screen h-full relative shrink-0 bg-gray-100 -ml-48 overflow-hidden"
+        className="panel w-screen h-full relative shrink-0  -ml-48 overflow-hidden"
       >
         <Image
           ref={secondSectionImageRef}
@@ -149,17 +146,14 @@ const ContentChapter: React.FC<ContentChapterProps> = ({ data, timeline }) => {
         />
 
         {/* Bottom Left Caption Overlay */}
-        <div className="absolute bottom-5 left-12 text-left z-10">
+        {/* <div className="absolute bottom-5 left-12 text-left z-10">
           <p className="font-sans text-[10px] uppercase text-gray-300 mb-2 drop-shadow-md tracking-tighter">
             Image
           </p>
           <p className="font-serif -mt-2 text-[12px] text-white drop-shadow-lg">
             {data.secondSection.bottomTitleLeftImage}
           </p>
-        </div>
-
-        {/* Subtle overlay to ensure white text pops on bright images */}
-        <div className="absolute inset-0 bg-black/10 pointer-events-none"></div>
+        </div> */}
       </section>
 
       {/* Panel 3: Split Layout - Scattered Images & Center Text */}
@@ -208,7 +202,7 @@ const ContentChapter: React.FC<ContentChapterProps> = ({ data, timeline }) => {
 
           {/* Center Typography */}
           <div className="relative z-20 max-w-2xl text-center flex flex-col gap-6">
-            <h3 className="font-serif text-4xl md:text-5xl leading-[0.9] text-black/80 uppercase tracking-tight">
+            <h3 className="font-serif text-4xl md:text-5xl leading-[0.9] text-black/80   tracking-tight">
               {data.thridSection.mainText}
             </h3>
 
@@ -249,11 +243,11 @@ const ContentChapter: React.FC<ContentChapterProps> = ({ data, timeline }) => {
       </section>
 
       {/* Panel 4: Final Split Layout */}
-      <section className="panel w-screen h-full shrink-0 bg-white flex items-center justify-center">
+      <section className="panel w-screen h-full shrink-0 flex items-center justify-center">
         <main className="flex flex-row items-center w-full h-full">
           {/* Left Side: Large Title */}
           <div className="w-[45%] h-full flex items-center justify-center p-16">
-            <h1 className="font-serif text-5xl leading-[0.85] text-black/80 uppercase tracking-[-0.04em] text-center">
+            <h1 className="font-serif text-5xl leading-[0.85] text-black/80   tracking-[-0.04em] text-center">
               {data.fourthSection.mainText}
             </h1>
           </div>

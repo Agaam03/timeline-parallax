@@ -195,7 +195,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onChapterClick }) => {
                 className="
                   chapter-card group cursor-pointer flex flex-col bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300
                   w-full                                  
-                  lg:w-[400px] lg:shrink-0 lg:min-w-[400px] lg:aspect-[3/4] lg:justify-center
+                  lg:w-[500px] lg:shrink-0 lg:min-w-[400px] lg:aspect-[3/4] lg:justify-center
                 "
                 onClick={() => handleLinkClick(chapter.id)}
               >
@@ -218,7 +218,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onChapterClick }) => {
 
                 {/* Middle Row: Large Title */}
                 <div className="mb-6 pr-2 min-h-[60px]">
-                  <h3 className="font-serif text-2xl lg:text-3xl uppercase leading-[0.9] text-black tracking-tight group-hover:text-gray-600 transition-colors duration-300">
+                  <h3 className="font-serif text-2xl lg:text-3xl  leading-[0.9] text-black tracking-tight group-hover:text-gray-600 transition-colors duration-300">
                     {chapter.firstSection.maintext.length > 50
                       ? `${chapter.firstSection.maintext.substring(0, 50)}...`
                       : chapter.firstSection.maintext}

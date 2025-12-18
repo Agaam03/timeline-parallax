@@ -61,7 +61,7 @@ const ChapterZero: React.FC = () => {
           <div id="image" className="relative z-10 order-2 md:order-1">
             <div className="relative p-2">
               {/* Optional border frame effect */}
-              <div className="absolute inset-0 rounded-sm transform translate-x-2 translate-y-2 border border-gray-200 hidden md:block"></div>
+              {/* <div className="absolute inset-0 rounded-sm transform translate-x-2 translate-y-2 border border-gray-200 hidden md:block"></div> */}
 
               <div
                 ref={imageWrapperRef}
