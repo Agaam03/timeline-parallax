@@ -1,8 +1,15 @@
-import FontQuintessential from "./FontQuintessential";
+import React from "react";
 
-const ChapterZeroMobile = () => {
+import { ChapterZeroData } from "@/types";
+import FontQuintessential from "../FontQuintessential";
+
+interface ChapterZeroMobileProps {
+  data: ChapterZeroData;
+}
+
+const ChapterZeroMobile: React.FC<ChapterZeroMobileProps> = ({ data }) => {
   return (
-    <section className="w-full h-full  flex flex-col items-center py-12 relative      ">
+    <section className="w-full h-full flex flex-col items-center py-12 relative bg-transparent">
       {/* Top Label */}
       <main className="text-center mt-7">
         <div className="text-[12px] font-sans text-black tracking-wide">
@@ -20,12 +27,11 @@ const ChapterZeroMobile = () => {
         {/* Main Image */}
         <div className="relative font-serif text-2xl leading-[0.8] text-black flex flex-col items-center w-full">
           <div className="w-full flex flex-row justify-center items-start text-[40px] mt-2 gap-1">
-            {/* Container Utama dengan Shadow Halus */}
-            <div className="relative w-[86%] h-[90%] overflow-hidden rounded-[2px]   group">
+            <div className="relative w-[86%] h-[90%] overflow-hidden rounded-[2px] group">
               <img
-                src="/chapter-0/0.jpg"
+                src={data.imageZero}
                 alt="Intro"
-                className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-3000 ease-in-out"
+                className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-[3000ms] ease-in-out"
               />
             </div>
           </div>
@@ -33,15 +39,24 @@ const ChapterZeroMobile = () => {
       </main>
 
       {/* Footer Section */}
-      <div className="text-center space-y-2 mt-5">
-        <div className="flex flex-row items-center justify-center gap-4 text-">
-          <FontQuintessential title="Ciputra Frida Pratama" />
-          <p className="italicew">&</p>
-          <FontQuintessential title="Aimmatur Nur Azizah" />
+      <div className="text-center space-y-4 mt-8 px-4">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <FontQuintessential
+            title={data.names.groom}
+            className="text-[26px] leading-tight"
+          />
+          <p className="font-serif italic text-gray-300 text-lg">&</p>
+          <FontQuintessential
+            title={data.names.bride}
+            className="text-[26px] leading-tight"
+          />
         </div>
-        <p className="font-serif italic text-[10px] text-gray-400">
-          Est. 2025 — Our Story
-        </p>
+        <div className="flex flex-col items-center gap-2 pt-2">
+          <div className="w-[1px] h-4 bg-gray-200"></div>
+          <p className="font-serif italic text-[10px] text-gray-400 tracking-wider">
+            Est. 2025 — Our Story
+          </p>
+        </div>
       </div>
     </section>
   );

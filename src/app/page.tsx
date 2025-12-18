@@ -8,13 +8,13 @@ import { useMediaQuery } from "react-responsive";
 import dynamic from "next/dynamic";
 import ChapterZero from "@/components/ChapterZero";
 import ContentChapter from "@/components/ContentChapter";
-import { CHAPTERS } from "@/constants";
+import { WEDDING_STORY } from "@/constants";
 import ChapterZeroMobile from "@/components/ChapterZeroMobile";
 
 import MusicPlayer from "@/components/MusicPlayer";
 import ContentChapterMobile from "@/components/ContentChapterMobile";
 import Sidebar from "@/components/Sidebar";
-import Silk from "@/components/Silk";
+import SplashScreen from "@/components/SplashScreen";
 
 // Register GSAP plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -25,7 +25,28 @@ const App: React.FC = () => {
   const musicPlayerContainerRef = useRef<HTMLElement>(null);
   const [tween, setTween] = useState<gsap.core.Tween | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const isDesktop = useMediaQuery({ minWidth: 770 });
+
+  // Handle Scroll Locking when Splash Screen is active
+  useLayoutEffect(() => {
+    if (showSplash) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      // Refresh ScrollTrigger calculations after the layout might have shifted post-splash
+      setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 100);
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+    };
+  }, [showSplash]);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -111,8 +132,6 @@ const App: React.FC = () => {
         const progress = targetOffsetLeft / amountToScroll;
 
         // ScrollTrigger start/end calculation
-        // The ScrollTrigger starts at top (0) and ends at totalWidth (roughly)
-        // We retrieve the scroll trigger instance to get exact start/end
         const st = ScrollTrigger.getById("main-scroll");
 
         if (st) {
@@ -137,17 +156,35 @@ const App: React.FC = () => {
     }
   };
 
+  const handleOpenInvitation = () => {
+    setShowSplash(false);
+    setIsPlaying(true);
+  };
+
   return (
-    <div ref={componentRef} className="bg-white overflow-hidden m-0 p-0 w-full">
+    <div
+      ref={componentRef}
+      className="relative overflow-hidden m-0 p-0 w-full bg-transparent"
+    >
+      {showSplash && (
+        <SplashScreen
+          data={WEDDING_STORY.intro}
+          onOpen={handleOpenInvitation}
+        />
+      )}
+
       <Sidebar onChapterClick={handleChapterClick} />
+
       {isDesktop ? (
         <>
-          <div ref={sliderRef} className="flex flex-nowrap h-screen w-max">
+          <div
+            ref={sliderRef}
+            className="flex flex-nowrap h-screen w-max bg-transparent"
+          >
             <div id="chapter-zero">
-              <ChapterZero />
+              <ChapterZero data={WEDDING_STORY.intro} />
             </div>
-            {CHAPTERS.map((chapter) => (
-              // ID added here for navigation
+            {WEDDING_STORY.chapters.map((chapter) => (
               <div key={chapter.id} id={chapter.id} className="h-full">
                 <ContentChapter data={chapter} timeline={tween} />
               </div>
@@ -157,10 +194,9 @@ const App: React.FC = () => {
       ) : (
         <>
           <div id="chapter-zero">
-            <ChapterZeroMobile />
+            <ChapterZeroMobile data={WEDDING_STORY.intro} />
           </div>
-          {CHAPTERS.map((chapter) => (
-            // ID added here for navigation
+          {WEDDING_STORY.chapters.map((chapter) => (
             <div key={chapter.id} id={chapter.id}>
               <ContentChapterMobile data={chapter} timeline={tween} />
             </div>
@@ -169,7 +205,7 @@ const App: React.FC = () => {
       )}
 
       {/* Progress Bar */}
-      <div className="fixed bottom-0 left-0 w-full h-[0.7px] bg-gray-100 z-[1000]">
+      <div className="fixed bottom-0 left-0 w-full h-[0.7px] bg-gray-100/50 z-[3000]">
         <div
           className="h-full bg-black origin-left scale-x-0 progress-bar"
           ref={(el) => {

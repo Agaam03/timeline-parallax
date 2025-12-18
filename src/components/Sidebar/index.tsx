@@ -2,7 +2,7 @@
 import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
-import { CHAPTERS } from "@/constants";
+import { WEDDING_STORY } from "@/constants";
 import { Spin as Hamburger } from "hamburger-react";
 
 interface SidebarProps {
@@ -107,7 +107,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onChapterClick }) => {
   return (
     <>
       {/* Navigation Bar / Toggle Button */}
-      <nav className="fixed top-0 right-0 lg:right-auto lg:left-0 w-full lg:w-20 h-14 lg:h-full bg-white z-[2010] border-b lg:border-b-0 lg:border-r border-gray-100 transition-all duration-300">
+      <nav className="fixed top-0 right-0 lg:right-auto lg:left-0 w-full lg:w-20 h-14 lg:h-full bg-white z-[2100] border-b lg:border-b-0 lg:border-r border-gray-100 transition-all duration-300">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="relative w-full h-full cursor-pointer outline-none block"
@@ -189,7 +189,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onChapterClick }) => {
               no-scrollbar overscroll-contain
             "
           >
-            {CHAPTERS.map((chapter, index) => (
+            {WEDDING_STORY.chapters.map((chapter, index) => (
               <div
                 key={chapter.id}
                 className="

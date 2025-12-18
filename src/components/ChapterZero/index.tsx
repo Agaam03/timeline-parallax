@@ -1,9 +1,17 @@
+"use client";
 import React, { useRef, useLayoutEffect } from "react";
-import Image from "next/image";
-import gsap from "gsap";
-import FontQuintessential from "../ChapterZeroMobile/FontQuintessential";
 
-const ChapterZero: React.FC = () => {
+import gsap from "gsap";
+
+import FontQuintessential from "../FontQuintessential";
+import { ChapterZeroData } from "@/types";
+import Image from "next/image";
+
+interface ChapterZeroProps {
+  data: ChapterZeroData;
+}
+
+const ChapterZero: React.FC<ChapterZeroProps> = ({ data }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const imageWrapperRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -48,28 +56,26 @@ const ChapterZero: React.FC = () => {
 
     return () => ctx.revert();
   }, []);
+  // PENTING: Cegah render HTML jika data kosong
 
   return (
     <section
       ref={containerRef}
-      className="w-screen h-screen flex flex-col items-center justify-center relative  shrink-0 overflow-hidden"
+      className="w-screen h-screen flex flex-col items-center justify-center relative shrink-0 overflow-hidden"
     >
-      <main className="flex flex-col items-center text-center z-10 max-w-[95vw] mx-auto w-full    ">
+      <main className="flex flex-col items-center text-center z-10 max-w-[95vw] mx-auto w-full">
         {/* Main Content: Split Layout */}
         <main className="flex flex-col md:flex-row items-center justify-center gap-10 md:gap-16 lg:gap-24 w-full relative">
           {/* Image Section - Animated Reveal */}
           <div id="image" className="relative z-10 order-2 md:order-1">
             <div className="relative p-2">
-              {/* Optional border frame effect */}
-              {/* <div className="absolute inset-0 rounded-sm transform translate-x-2 translate-y-2 border border-gray-200 hidden md:block"></div> */}
-
               <div
                 ref={imageWrapperRef}
                 className="w-[80vw] h-[50vh] md:w-[28vw] md:h-[80vh] overflow-hidden bg-gray-100 shadow-2xl relative"
               >
                 <Image
                   ref={imageRef}
-                  src="/chapter-0/0.jpg"
+                  src={data.imageZero}
                   alt="Couple"
                   fill
                   priority
@@ -83,7 +89,7 @@ const ChapterZero: React.FC = () => {
           {/* Text Section - Modern & Interactive */}
           <div
             id="text"
-            className="flex flex-col gap-6 items-center md:items-start justify-center text-center md:text-left z-30 text-black order-1 md:order-2   "
+            className="flex flex-col gap-6 items-center md:items-start justify-center text-center md:text-left z-30 text-black order-1 md:order-2"
           >
             {/* Top Label */}
             <div className="anim-text text-[10px] uppercase tracking-[0.3em] font-sans text-gray-400">
@@ -98,8 +104,8 @@ const ChapterZero: React.FC = () => {
               <div className="flex flex-col items-center md:items-start gap-1">
                 <div className="anim-text transform transition-all hover:-translate-y-1 duration-500 hover:scale-[1.02] cursor-default">
                   <FontQuintessential
-                    title="Ciputra Frida Pratama"
-                    className="font-black leading-[0.9] text-black text-[42px] sm:text-[60px] md:text-[5vw] lg:text-[70px] "
+                    title={data.names.groom}
+                    className="font-black leading-[0.9] text-black text-[42px] sm:text-[60px] md:text-[5vw] lg:text-[70px]"
                   />
                 </div>
 
@@ -109,7 +115,7 @@ const ChapterZero: React.FC = () => {
 
                 <div className="anim-text transform transition-all hover:-translate-y-1 duration-500 hover:scale-[1.02] cursor-default">
                   <FontQuintessential
-                    title="Aimmatur Nur Azizah"
+                    title={data.names.bride}
                     className="font-black leading-[0.9] text-black text-[42px] sm:text-[60px] md:text-[5vw] lg:text-[70px] whitespace-nowrap"
                   />
                 </div>

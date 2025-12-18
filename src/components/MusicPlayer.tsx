@@ -1,14 +1,16 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { Play, Pause } from "lucide-react";
-import { TbMinimize } from "react-icons/tb";
-import { IoPlayBack } from "react-icons/io5";
-import Lottie from "lottie-react";
-import ArrowDown from "@/../public/assets/Arrow Down.json";
-import Slider from "@mui/material/Slider";
-import Stack from "@mui/material/Stack";
-import { VolumeDownRounded, VolumeUpRounded } from "@mui/icons-material";
-import { playlist } from "@/data/playlist";
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Volume2,
+  VolumeX,
+  Minimize2,
+  Maximize2,
+} from "lucide-react";
+import { playlist } from "../data/playlist";
 
 interface MusicPlayerProps {
   isPlaying: boolean;
@@ -36,7 +38,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
     return `${minutes}:${seconds}`;
   };
 
-  // 🔊 Toggle play/pause
   const togglePlayPause = async () => {
     if (!audioRef.current) return;
     if (isPlaying) {
@@ -47,12 +48,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
         await audioRef.current.play();
         onTogglePlay(true);
       } catch (err) {
-        console.warn("Autoplay blocked ❌", err);
+        console.warn("Autoplay blocked", err);
       }
     }
   };
 
-  // Next & Previous Track
   const playNext = () => {
     setCurrentTrackIndex((prev) => (prev + 1) % playlist.length);
     onTogglePlay(true);
@@ -65,7 +65,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
     onTogglePlay(true);
   };
 
-  // Update progress bar
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -79,53 +78,36 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
     };
   }, []);
 
-  // Handle play/pause dari parent (isPlaying)
   useEffect(() => {
     if (!audioRef.current) return;
     const audio = audioRef.current;
     audio.volume = volume;
 
     if (isPlaying) {
-      audio
-        .play()
-        .then(() => console.log("🎵 Music playing"))
-        .catch((err) => console.warn("Autoplay blocked ❌", err));
+      audio.play().catch((err) => console.warn("Autoplay blocked", err));
     } else {
       audio.pause();
     }
   }, [isPlaying]);
 
-  // Volume slider
-  const handleVolumeChange = (_: unknown, value: number | number[]) => {
-    const newVolume = Array.isArray(value) ? value[0] : value;
-    setVolume(newVolume / 100);
-    if (audioRef.current) audioRef.current.volume = newVolume / 100;
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const time = Number(e.target.value);
+    setCurrentTime(time);
+    if (audioRef.current) audioRef.current.currentTime = time;
   };
 
-  // Progress (seek)
-  const handleSeekChange = (_: unknown, value: number | number[]) => {
-    setCurrentTime(Array.isArray(value) ? value[0] : value);
+  const handleVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const vol = Number(e.target.value) / 100;
+    setVolume(vol);
+    if (audioRef.current) audioRef.current.volume = vol;
   };
-
-  const handleSeekCommit = (_: unknown, value: number | number[]) => {
-    if (!audioRef.current) return;
-    const newTime = Array.isArray(value) ? value[0] : value;
-    audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime);
-  };
-
-  // Auto play saat ganti lagu
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.volume = volume;
-    if (isPlaying) {
-      audio.play().catch((err) => console.warn("Autoplay blocked ❌", err));
-    }
-  }, [currentTrackIndex, isPlaying]);
 
   return (
-    <main className="relative w-56 mx-auto bg-gray-100 rounded-sm   overflow-hidden text-black">
+    <main
+      className={`relative w-58 mx-auto bg-white/90 backdrop-blur-md rounded-xl overflow-hidden text-black shadow-xl   transition-all duration-500 ${
+        minimized ? "h-14" : "h-auto"
+      }`}
+    >
       <audio
         ref={audioRef}
         src={currentTrack.url}
@@ -134,108 +116,122 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({
       />
 
       {minimized ? (
-        <div className="flex items-center justify-between px-2 py-2">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-between px-3 h-14">
+          <div className="flex items-center space-x-3 overflow-hidden">
             <img
               src={currentTrack.cover}
               alt={currentTrack.title}
-              className="w-10 h-10 rounded-lg object-cover"
+              className="w-8 h-8 rounded-full object-cover animate-spin-slow"
+              style={{ animationDuration: isPlaying ? "10s" : "0s" }}
             />
-            <div>
-              <h3 className="text-xs font-medium truncate w-[80px]">
+            <div className="overflow-hidden">
+              <h3 className="text-[10px] font-bold truncate uppercase tracking-wider">
                 {currentTrack.title}
               </h3>
-              <p className="text-xs text-black">{currentTrack.artist}</p>
+              <p className="text-[9px] text-gray-500 truncate">
+                {currentTrack.artist}
+              </p>
             </div>
           </div>
-          <button onClick={() => setMinimized(false)} className="-ml-2">
-            <Lottie
-              animationData={ArrowDown}
-              loop
-              style={{
-                width: 36,
-                height: 36,
-                cursor: "pointer",
-                filter: "invert(0) brightness(0)", // jadi hitam
-              }}
-            />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={togglePlayPause}
+              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              {isPlaying ? (
+                <Pause size={14} fill="black" />
+              ) : (
+                <Play size={14} fill="black" />
+              )}
+            </button>
+            <button
+              onClick={() => setMinimized(false)}
+              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <Maximize2 size={14} />
+            </button>
+          </div>
         </div>
       ) : (
-        <>
-          <div className="relative h-40">
+        <div className="flex flex-col">
+          <div className="relative h-40 group">
             <img
               src={currentTrack.cover}
               alt={currentTrack.title}
-              className="absolute inset-0 w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <button
+              onClick={() => setMinimized(true)}
+              className="absolute top-3 right-3 p-1.5 bg-white/20 backdrop-blur-md rounded-lg text-white hover:bg-white/40 transition-colors"
+            >
+              <Minimize2 size={16} />
+            </button>
           </div>
 
-          <div className="p-3">
-            <h2 className="text-xs text-gray-900">{currentTrack.artist}</h2>
-            <p className="text-sm font-medium">{currentTrack.title}</p>
-          </div>
+          <div className="p-4 bg-white">
+            <div className="mb-4">
+              <h2 className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">
+                {currentTrack.artist}
+              </h2>
+              <p className="text-sm font-serif font-bold text-gray-900">
+                {currentTrack.title}
+              </p>
+            </div>
 
-          <div className="px-3">
-            <Slider
-              value={currentTime}
-              min={0}
-              step={1}
-              max={duration || 0}
-              onChange={handleSeekChange}
-              onChangeCommitted={handleSeekCommit}
-              sx={{
-                color: "#fff",
-                "& .MuiSlider-thumb": { width: 12, height: 12 },
-              }}
-            />
-            <div className="flex justify-between text-xs text-gray-400">
-              <span>{formatTime(currentTime)}</span>
-              <span>{formatTime(duration)}</span>
+            <div className="space-y-1 mb-4">
+              <input
+                type="range"
+                min="0"
+                max={duration || 0}
+                value={currentTime}
+                onChange={handleSeek}
+                className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+              />
+              <div className="flex justify-between text-[10px] font-mono text-gray-400">
+                <span>{formatTime(currentTime)}</span>
+                <span>{formatTime(duration)}</span>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center mb-6">
+              <button
+                onClick={playPrev}
+                className="text-gray-400 hover:text-black transition-colors"
+              >
+                <SkipBack size={20} fill="currentColor" />
+              </button>
+              <button
+                onClick={togglePlayPause}
+                className="w-12 h-12 flex items-center justify-center bg-black text-white rounded-full hover:scale-110 transition-transform shadow-lg"
+              >
+                {isPlaying ? (
+                  <Pause size={24} fill="white" />
+                ) : (
+                  <Play size={24} fill="white" className="ml-1" />
+                )}
+              </button>
+              <button
+                onClick={playNext}
+                className="text-gray-400 hover:text-black transition-colors"
+              >
+                <SkipForward size={20} fill="currentColor" />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Volume2 size={14} className="text-gray-400" />
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={volume * 100}
+                onChange={handleVolume}
+                className="flex-grow h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-black"
+              />
             </div>
           </div>
-
-          <div className="flex justify-center items-center space-x-5 py-2">
-            <button onClick={playPrev}>
-              <IoPlayBack className="text-black text-xl" />
-            </button>
-            <button
-              onClick={togglePlayPause}
-              className="p-2 bg-gray-400 rounded-full"
-            >
-              {isPlaying ? <Pause /> : <Play />}
-            </button>
-            <button onClick={playNext}>
-              <IoPlayBack className="text-black text-xl transform scale-x-[-1]" />
-            </button>
-          </div>
-
-          <Stack
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            sx={{ px: 2, mb: 2 }}
-          >
-            <VolumeDownRounded />
-            <Slider
-              value={volume * 100}
-              onChange={handleVolumeChange}
-              aria-label="Volume"
-              sx={{
-                color: "#fff",
-                "& .MuiSlider-thumb": { width: 14, height: 14 },
-              }}
-            />
-            <VolumeUpRounded />
-          </Stack>
-
-          <button
-            onClick={() => setMinimized(true)}
-            className="absolute top-2 right-2 text-white hover:text-white cursor-pointer bg-black/45 p-[2px] rounded-md"
-          >
-            <TbMinimize size={20} />
-          </button>
-        </>
+        </div>
       )}
     </main>
   );

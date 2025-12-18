@@ -1,3 +1,13 @@
+
+export interface ChapterZeroData {
+  names: {
+    groom: string;
+    bride: string;
+  };
+  imageZero: string,
+  imageSplash: string,
+}
+
 export interface ChapterData {
   id: string;
   chapter: string;
@@ -33,4 +43,9 @@ export interface ChapterData {
     titleMainImageRight: string;
     descImageRight: string;
   };
+}
+
+export interface WeddingStory {
+  intro: ChapterZeroData;
+  chapters: ChapterData[];
 }
